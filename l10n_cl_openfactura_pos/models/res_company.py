@@ -11,6 +11,7 @@ class ResCompany(models.Model):
         ('production', 'Production'),
     ], default='sandbox')
     openfactura_business_activity = fields.Char()
+    openfactura_default_branch_code = fields.Char()
     openfactura_timeout_seconds = fields.Integer(default=30)
     openfactura_retry_count = fields.Integer(default=2)
     openfactura_last_connection_state = fields.Selection([

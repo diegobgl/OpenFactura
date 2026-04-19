@@ -11,6 +11,7 @@
                         <field name="openfactura_base_url"/>
                         <field name="openfactura_environment"/>
                         <field name="openfactura_business_activity"/>
+                        <field name="openfactura_default_branch_code"/>
                         <field name="openfactura_timeout_seconds"/>
                         <field name="openfactura_retry_count"/>
                         <field name="openfactura_last_connection_state" readonly="1"/>

@@ -9,11 +9,21 @@ class OpenfacturaDocument(models.Model):
 
     name = fields.Char(required=True, default='New')
     company_id = fields.Many2one('res.company', required=True, index=True)
+    source_model = fields.Char(required=True, index=True)
+    source_res_id = fields.Integer(required=True, index=True)
+    source_channel = fields.Selection([('pos', 'POS'), ('account_move', 'Facturación')], required=True, index=True)
+
     pos_config_id = fields.Many2one('pos.config', index=True)
     pos_order_id = fields.Many2one('pos.order', index=True)
     account_move_id = fields.Many2one('account.move', index=True)
     partner_id = fields.Many2one('res.partner')
-    document_type = fields.Selection([('receipt', 'Boleta'), ('invoice', 'Factura')], required=True)
+
+    document_type = fields.Selection([
+        ('receipt', 'Boleta'),
+        ('invoice', 'Factura'),
+        ('credit_note', 'Nota de Crédito'),
+        ('debit_note', 'Nota de Débito'),
+    ], required=True)
     state = fields.Selection([
         ('draft', 'Draft'), ('pending_send', 'Pending Send'), ('sending', 'Sending'), ('sent', 'Sent'),
         ('accepted', 'Accepted'), ('rejected', 'Rejected'), ('pending_status', 'Pending Status'),
@@ -49,14 +59,14 @@ class OpenfacturaDocument(models.Model):
 
     def action_retry(self):
         for rec in self:
-            if rec.pos_order_id:
+            if rec.source_channel == 'pos' and rec.pos_order_id:
                 rec.pos_order_id.action_openfactura_emit()
+            elif rec.source_channel == 'account_move' and rec.account_move_id:
+                rec.account_move_id.action_openfactura_retry()
 
     def action_refresh_status(self):
         for rec in self.filtered(lambda d: d.external_id):
-            response = self._get_client(rec.company_id).call(
-                'get_document_status', path_params={'external_id': rec.external_id}
-            )
+            response = self._get_client(rec.company_id).call('get_document_status', path_params={'external_id': rec.external_id})
             status = (response['data'].get('status') if isinstance(response['data'], dict) else '') or 'pending'
             from ..services.openfactura_status_service import OpenfacturaStatusService
             rec.state = OpenfacturaStatusService.normalize(status)

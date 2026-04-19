@@ -1,50 +1,50 @@
 # l10n_cl_openfactura_pos
 
-Integración Odoo 19 POS ↔ Openfactura (Haulmer) para emisión de DTE en Chile, con trazabilidad, idempotencia y soporte operativo.
+Integración Odoo 19 (Community + Enterprise) para emisión tributaria Openfactura desde **POS** y **Facturación/Contabilidad**.
 
-## Instalación
-1. Copiar el módulo en addons path.
-2. Actualizar apps list e instalar `l10n_cl_openfactura_pos`.
-3. Verificar dependencias: `point_of_sale`, `account`, `mail`, `contacts`, `product`, `stock`.
+## Objetivo
+- Canal único de integración Openfactura reutilizable.
+- Trazabilidad completa de request/response, estado, idempotencia y adjuntos.
+- Arquitectura mantenible, multi-company, operable en producción.
 
-## Configuración
-### Por compañía
-- API Key Openfactura.
-- Base URL API.
-- Ambiente (sandbox/producción).
-- Giro por defecto.
-- Timeout y reintentos.
+## Arquitectura
+- **Cliente HTTP único**: `services/openfactura_client.py`
+- **Modelo documental unificado**: `openfactura.document` con `source_channel`, `source_model`, `source_res_id`.
+- **Servicio de emisión común**: `services/openfactura_emission_service.py`.
+- **Mappers por canal**:
+  - `openfactura_mapper_pos.py`
+  - `openfactura_mapper_account_move.py`
+- **Builder de idempotencia/document type común**: `openfactura_dte_builder.py`.
 
-### Por POS
-- Habilitar emisión Openfactura.
-- Tipo de documento por defecto (boleta/factura).
-- Sucursal.
-- Restricciones de factura sin cliente.
+## Flujos de emisión
+### 1) POS
+`pos.order.create_from_ui()` → `pos.order.action_openfactura_emit()` → `OpenfacturaEmissionService.emit_from_pos()`.
 
-## Flujo de emisión POS
-1. Cajero elige Boleta/Factura.
-2. POS envía orden a backend Odoo.
-3. `pos.order.create_from_ui()` gatilla `action_openfactura_emit()`.
-4. Backend construye payload, calcula idempotency key determinística y llama API mediante `OpenfacturaClient`.
-5. Se persiste `openfactura.document`, `openfactura.log`, chatter, adjuntos PDF/XML/JSON si existen.
+### 2) Facturación / Contabilidad
+Botones en `account.move`:
+- Emitir Openfactura
+- Consultar Estado
+- Reintentar
+- Descargar PDF
+- Ver Documento Openfactura
 
-## Troubleshooting
-- **Error de conexión**: ejecutar wizard de prueba de conexión y revisar `Openfactura Logs`.
-- **Orden en retry**: usar acción manual Retry en documento.
-- **Factura bloqueada**: completar datos tributarios del partner (RUT, razón social, dirección, comuna).
+Flujo: `account.move.action_openfactura_emit()` → `OpenfacturaEmissionService.emit_from_account_move()`.
 
-## Decisiones de arquitectura
-- Cliente HTTP centralizado con manejo uniforme de errores.
-- Endpoint registry desacoplado de modelos de negocio.
-- Servicios separados: builder, mapper, sync, status, attachment.
-- Estado de documento explícito y cron para refresh de estado.
-- Multi-company por diseño (config y datos con `company_id`).
+## Validaciones
+- Partner tributario (RUT, razón social, dirección, ciudad).
+- Líneas con contenido.
+- `account.move` cliente y estado `posted` para emisión conservadora.
+- Tipo documental según `move_type`.
 
-## Extensión futura
-- Añadir catálogo maestro persistente por recurso (document types, branches, payment methods, taxes, activities).
-- Sincronización bidireccional de productos y clientes.
-- Webhooks/callbacks solo si Openfactura los documenta oficialmente.
-- Dashboard KPI de aceptación/rechazo y latencia de API.
+## Idempotencia
+Key determinística por:
+`company + source_channel + source_model + source_res_id + document_type`.
 
-## Nota sobre documentación API
-Se intentó consultar `https://docsapi-openfactura.haulmer.com/`, pero en este entorno devolvió bloqueo de red (403 CONNECT tunnel). El módulo mantiene `openfactura_endpoints.py` como capa de adaptación para ajustar rutas/payloads de forma segura según la documentación oficial vigente al desplegar en entorno con acceso.
+## Trazabilidad
+- `openfactura.document`: payloads, response, folio, external_id, estado, adjuntos.
+- `openfactura.log`: logging técnico saneado (apikey oculto).
+- Chatter en `pos.order` y `account.move`.
+
+## Nota de documentación Openfactura
+En este entorno no fue posible consultar `https://docsapi-openfactura.haulmer.com/` por bloqueo de red (`403 CONNECT tunnel failed`).
+Se dejó `openfactura_endpoints.py` como capa de adaptación para alinear rápidamente rutas/payloads con la documentación oficial vigente en entorno con acceso.

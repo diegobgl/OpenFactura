@@ -19,6 +19,7 @@
         'data/cron_data.xml',
         'views/res_company_views.xml',
         'views/pos_config_views.xml',
+        'views/account_move_views.xml',
         'views/openfactura_document_views.xml',
         'views/openfactura_log_views.xml',
         'views/openfactura_menu.xml',

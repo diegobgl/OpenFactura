@@ -1,0 +1,9 @@
+<odoo>
+    <menuitem id="menu_openfactura_root" name="Openfactura" parent="point_of_sale.menu_point_root" groups="l10n_cl_openfactura_pos.group_openfactura_user"/>
+    <menuitem id="menu_openfactura_documents" name="Documents" parent="menu_openfactura_root" action="action_openfactura_document"/>
+    <menuitem id="menu_openfactura_logs" name="Logs" parent="menu_openfactura_root" action="action_openfactura_log" groups="l10n_cl_openfactura_pos.group_openfactura_manager"/>
+
+    <menuitem id="menu_openfactura_account_root" name="Openfactura" parent="account.menu_finance" groups="l10n_cl_openfactura_pos.group_openfactura_user"/>
+    <menuitem id="menu_openfactura_account_documents" name="Documents" parent="menu_openfactura_account_root" action="action_openfactura_document"/>
+    <menuitem id="menu_openfactura_account_logs" name="Logs" parent="menu_openfactura_account_root" action="action_openfactura_log" groups="l10n_cl_openfactura_pos.group_openfactura_manager"/>
+</odoo>

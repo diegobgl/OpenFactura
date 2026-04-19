@@ -1,0 +1,9 @@
+<odoo>
+    <record id="group_openfactura_user" model="res.groups">
+        <field name="name">Openfactura User</field>
+    </record>
+    <record id="group_openfactura_manager" model="res.groups">
+        <field name="name">Openfactura Manager</field>
+        <field name="implied_ids" eval="[(4, ref('l10n_cl_openfactura_pos.group_openfactura_user'))]"/>
+    </record>
+</odoo>

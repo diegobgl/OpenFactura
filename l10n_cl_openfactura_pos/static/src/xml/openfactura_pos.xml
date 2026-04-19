@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="l10n_cl_openfactura_pos.PaymentScreenButtons" t-inherit="point_of_sale.PaymentScreenButtons" t-inherit-mode="extension">
+        <xpath expr="//div[contains(@class, 'payment-buttons')]" position="inside">
+            <div class="button" t-on-click="() => this.setOpenfacturaDocType('receipt')">Boleta</div>
+            <div class="button" t-on-click="() => this.setOpenfacturaDocType('invoice')">Factura</div>
+        </xpath>
+    </t>
+</templates>

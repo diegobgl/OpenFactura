@@ -1,0 +1,23 @@
+<odoo>
+    <record id="view_company_form_openfactura" model="ir.ui.view">
+        <field name="name">res.company.form.openfactura</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="base.view_company_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Openfactura">
+                    <group>
+                        <field name="openfactura_api_key" password="True"/>
+                        <field name="openfactura_base_url"/>
+                        <field name="openfactura_environment"/>
+                        <field name="openfactura_business_activity"/>
+                        <field name="openfactura_timeout_seconds"/>
+                        <field name="openfactura_retry_count"/>
+                        <field name="openfactura_last_connection_state" readonly="1"/>
+                        <field name="openfactura_last_connection_message" readonly="1"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

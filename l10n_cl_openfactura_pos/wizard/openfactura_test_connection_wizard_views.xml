@@ -1,0 +1,15 @@
+<odoo>
+    <record id="view_openfactura_test_connection_wizard" model="ir.ui.view">
+        <field name="name">openfactura.test.connection.wizard.form</field>
+        <field name="model">openfactura.test.connection.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Test Openfactura Connection">
+                <group><field name="company_id"/></group>
+                <footer>
+                    <button name="action_test" type="object" string="Test" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,37 @@
+{
+    'name': 'Chile POS Openfactura Integration',
+    'version': '19.0.1.0.0',
+    'summary': 'POS DTE integration with Openfactura (Haulmer) for Chile',
+    'category': 'Point of Sale',
+    'author': 'OpenAI',
+    'license': 'LGPL-3',
+    'depends': [
+        'point_of_sale',
+        'account',
+        'mail',
+        'contacts',
+        'product',
+        'stock',
+    ],
+    'data': [
+        'security/openfactura_security.xml',
+        'security/ir.model.access.csv',
+        'data/cron_data.xml',
+        'views/res_company_views.xml',
+        'views/pos_config_views.xml',
+        'views/openfactura_document_views.xml',
+        'views/openfactura_log_views.xml',
+        'views/openfactura_menu.xml',
+        'wizard/openfactura_test_connection_wizard_views.xml',
+        'wizard/openfactura_resync_wizard_views.xml',
+        'wizard/openfactura_reprocess_wizard_views.xml',
+    ],
+    'assets': {
+        'point_of_sale._assets_pos': [
+            'l10n_cl_openfactura_pos/static/src/js/openfactura_pos.js',
+            'l10n_cl_openfactura_pos/static/src/xml/openfactura_pos.xml',
+        ],
+    },
+    'installable': True,
+    'application': False,
+}

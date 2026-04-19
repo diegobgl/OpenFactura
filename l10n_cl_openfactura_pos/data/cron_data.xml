@@ -1,0 +1,11 @@
+<odoo>
+    <record id="ir_cron_openfactura_refresh_status" model="ir.cron">
+        <field name="name">Openfactura: Refresh document status</field>
+        <field name="model_id" ref="model_openfactura_sync_job"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_refresh_document_status()</field>
+        <field name="interval_number">5</field>
+        <field name="interval_type">minutes</field>
+        <field name="active">True</field>
+    </record>
+</odoo>
